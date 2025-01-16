@@ -4,7 +4,6 @@ import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryAlre
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.WasteCategoryRepository;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

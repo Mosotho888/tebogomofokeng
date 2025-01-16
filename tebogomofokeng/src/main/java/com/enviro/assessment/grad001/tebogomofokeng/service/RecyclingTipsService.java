@@ -2,9 +2,7 @@ package com.enviro.assessment.grad001.tebogomofokeng.service;
 
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipAlreadyExist;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipsNotFoundException;
-import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.RecyclingTips;
-import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.RecyclingTipsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
