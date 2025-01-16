@@ -1,6 +1,10 @@
 package com.enviro.assessment.grad001.tebogomofokeng.service;
 
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipAlreadyExist;
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipsNotFoundException;
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.RecyclingTips;
+import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.RecyclingTipsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,13 +25,15 @@ public class RecyclingTipsService {
         this.recyclingTipsRepository = recyclingTipsRepository;
     }
 
-    public ResponseEntity<Void> createRecyclingTips(RecyclingTips newRecyclingTipsRequest) {
-        RecyclingTips saveRecyclingTips = new RecyclingTips();
+    public ResponseEntity<Void> createRecyclingTip(RecyclingTips newRecyclingTipsRequest) {
+        Boolean doesRecyclingTipExist = recyclingTipsRepository.existsByRecyclingTip(newRecyclingTipsRequest.getRecyclingTip());
 
-        saveRecyclingTips.setId(null);
-        saveRecyclingTips.setRecyclingTips(newRecyclingTipsRequest.getRecyclingTips());
+        if (doesRecyclingTipExist) {
+            throw new RecyclingTipAlreadyExist();
+        }
+        RecyclingTips recyclingTip = new RecyclingTips();
 
-        recyclingTipsRepository.save(saveRecyclingTips);
+        saveRecyclingTip(newRecyclingTipsRequest, recyclingTip);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -43,41 +49,41 @@ public class RecyclingTipsService {
     }
 
     public ResponseEntity<RecyclingTips> getRecyclingTipById(Long recyclingTipId) {
-        Optional<RecyclingTips> optionalRecyclingTips = recyclingTipsRepository.findById(recyclingTipId);
+        RecyclingTips recyclingTip = getRecyclingTip(recyclingTipId);
 
-        if (optionalRecyclingTips.isPresent()) {
-            RecyclingTips recyclingTips = optionalRecyclingTips.get();
-
-            return ResponseEntity.ok(recyclingTips);
-        }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(recyclingTip);
     }
 
     public ResponseEntity<Void> updateRecyclingTips(Long recyclingTipId, RecyclingTips updatedRecyclingTip) {
-        Optional<RecyclingTips> optionalRecyclingTips = recyclingTipsRepository.findById(recyclingTipId);
+        RecyclingTips recyclingTip = getRecyclingTip(recyclingTipId);
 
-        if (optionalRecyclingTips.isPresent()) {
-            RecyclingTips recyclingTips = optionalRecyclingTips.get();
-            recyclingTips.setRecyclingTips(updatedRecyclingTip.getRecyclingTips());
-            recyclingTipsRepository.save(recyclingTips);
+        saveRecyclingTip(updatedRecyclingTip, recyclingTip);
 
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     public ResponseEntity<Void> deleteRecyclingTipById(Long recyclingTipId) {
-        Optional<RecyclingTips> optionalRecyclingTips = recyclingTipsRepository.findById(recyclingTipId);
+        RecyclingTips recyclingTip = getRecyclingTip(recyclingTipId);
 
-        if (optionalRecyclingTips.isPresent()) {
-            RecyclingTips recyclingTips = optionalRecyclingTips.get();
-            recyclingTipsRepository.delete(recyclingTips);
+        recyclingTipsRepository.delete(recyclingTip);
 
-            return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    private void saveRecyclingTip(RecyclingTips newRecyclingTip, RecyclingTips recyclingTip) {
+        recyclingTip.setRecyclingTip(newRecyclingTip.getRecyclingTip());
+
+        recyclingTipsRepository.save(recyclingTip);
+    }
+
+    public RecyclingTips getRecyclingTip(Long recyclingTipId) {
+        Optional<RecyclingTips> optionalRecyclingTip = recyclingTipsRepository.findById(recyclingTipId);
+
+        if (optionalRecyclingTip.isPresent()) {
+
+            return optionalRecyclingTip.get();
+
         }
-
-        return ResponseEntity.notFound().build();
+        throw new RecyclingTipsNotFoundException();
     }
 }

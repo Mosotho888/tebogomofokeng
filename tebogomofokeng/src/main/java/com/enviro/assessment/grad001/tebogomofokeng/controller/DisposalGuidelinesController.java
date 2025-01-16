@@ -5,6 +5,7 @@ import com.enviro.assessment.grad001.tebogomofokeng.service.DisposalGuidelinesSe
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

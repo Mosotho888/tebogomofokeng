@@ -5,22 +5,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 @Entity
+@Validated
 public class DisposalGuidelines {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty(message = "disposal guidelines must NOT be empty")
-    private String disposal_guidelines;
+    private String disposalGuideline;
     private Long categoryId;
 
     public DisposalGuidelines() {
     }
 
-    public DisposalGuidelines(Long id, String disposal_guidelines) {
+    public DisposalGuidelines(Long id, String disposalGuideline) {
         this.id = id;
-        this.disposal_guidelines = disposal_guidelines;
+        this.disposalGuideline = disposalGuideline;
     }
 
     public Long getId() {
@@ -31,11 +34,11 @@ public class DisposalGuidelines {
         this.id = id;
     }
 
-    public String getDisposal_guidelines() {
-        return disposal_guidelines;
+    public String getDisposalGuideline() {
+        return disposalGuideline;
     }
 
-    public void setDisposal_guidelines(String disposal_guidelines) {
-        this.disposal_guidelines = disposal_guidelines;
+    public void setDisposalGuideline(String disposalGuideline) {
+        this.disposalGuideline = disposalGuideline;
     }
 }

@@ -28,7 +28,7 @@ public class RecyclingTipsController {
     }
     @PostMapping
     public ResponseEntity<Void> createRecyclingTip(@Valid @RequestBody RecyclingTips newRecyclingTipRequest) {
-        return recyclingTipsService.createRecyclingTips(newRecyclingTipRequest);
+        return recyclingTipsService.createRecyclingTip(newRecyclingTipRequest);
     }
     @PutMapping("{id}")
     public ResponseEntity<Void> updateRecyclingTip(@PathVariable Long id, @Valid @RequestBody RecyclingTips updatedRecyclingTip) {

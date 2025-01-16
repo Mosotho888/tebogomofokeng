@@ -12,15 +12,15 @@ public class RecyclingTips {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty(message = "Recycling tips must NOT be empty")
-    private String recyclingTips;
+    private String recyclingTip;
     private Long categoryId;
 
     public RecyclingTips() {
     }
 
-    public RecyclingTips(Long id, String recyclingTips) {
+    public RecyclingTips(Long id, String recyclingTip) {
         this.id = id;
-        this.recyclingTips = recyclingTips;
+        this.recyclingTip = recyclingTip;
     }
 
     public Long getId() {
@@ -31,11 +31,11 @@ public class RecyclingTips {
         this.id = id;
     }
 
-    public String getRecyclingTips() {
-        return recyclingTips;
+    public String getRecyclingTip() {
+        return recyclingTip;
     }
 
-    public void setRecyclingTips(String recyclingTips) {
-        this.recyclingTips = recyclingTips;
+    public void setRecyclingTip(String recyclingTip) {
+        this.recyclingTip = recyclingTip;
     }
 }

@@ -1,5 +1,7 @@
 package com.enviro.assessment.grad001.tebogomofokeng.service;
 
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineAlreadyExists;
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.DisposalGuidelines;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.DisposalGuidelinesRepository;
 import org.springframework.data.domain.Page;
@@ -23,14 +25,18 @@ public class DisposalGuidelinesService {
     }
 
     public ResponseEntity<Void> createDisposalGuideline(DisposalGuidelines newDisposalGuidelineRequest) {
-        DisposalGuidelines saveDisposalGuidelines = new DisposalGuidelines();
+        Boolean doesDisposalGuidelineExist = disposalGuidelinesRepository.existsByDisposalGuideline(newDisposalGuidelineRequest.getDisposalGuideline());
 
-        saveDisposalGuidelines.setId(null);
-        saveDisposalGuidelines.setDisposal_guidelines(newDisposalGuidelineRequest.getDisposal_guidelines());
+        if (doesDisposalGuidelineExist) {
+            throw new DisposalGuidelineAlreadyExists();
+        }
 
-        disposalGuidelinesRepository.save(saveDisposalGuidelines);
+        DisposalGuidelines disposalGuidelines = new DisposalGuidelines();
+
+        saveDisposalGuideline(newDisposalGuidelineRequest, disposalGuidelines);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+
     }
 
     public ResponseEntity<List<DisposalGuidelines>> getAllDisposalGuidelines(Pageable pageable) {
@@ -44,41 +50,40 @@ public class DisposalGuidelinesService {
     }
 
     public ResponseEntity<DisposalGuidelines> getDisposalGuidelinesById(Long disposalGuidelineId) {
-        Optional<DisposalGuidelines> optionalDisposalGuidelines = disposalGuidelinesRepository.findById(disposalGuidelineId);
+        DisposalGuidelines disposalGuideline = getDisposalGuideline(disposalGuidelineId);
 
-        if (optionalDisposalGuidelines.isPresent()) {
-            DisposalGuidelines disposalGuidelines = optionalDisposalGuidelines.get();
-
-            return ResponseEntity.ok(disposalGuidelines);
-        }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(disposalGuideline);
     }
 
     public ResponseEntity<Void> updateDisposalGuidelines(Long disposalGuidelineId, DisposalGuidelines updatedDisposalGuideline) {
-        Optional<DisposalGuidelines> optionalDisposalGuidelines = disposalGuidelinesRepository.findById(disposalGuidelineId);
+        DisposalGuidelines disposalGuideline = getDisposalGuideline(disposalGuidelineId);
 
-        if (optionalDisposalGuidelines.isPresent()) {
-            DisposalGuidelines disposalGuidelines = optionalDisposalGuidelines.get();
-            disposalGuidelines.setDisposal_guidelines(updatedDisposalGuideline.getDisposal_guidelines());
-            disposalGuidelinesRepository.save(disposalGuidelines);
+        saveDisposalGuideline(updatedDisposalGuideline, disposalGuideline);
 
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     public ResponseEntity<Void> deleteDisposalGuideline(Long disposalGuidelineId) {
-        Optional<DisposalGuidelines> optionalDisposalGuidelines = disposalGuidelinesRepository.findById(disposalGuidelineId);
+        DisposalGuidelines disposalGuideline = getDisposalGuideline(disposalGuidelineId);
 
-        if (optionalDisposalGuidelines.isPresent()) {
-            DisposalGuidelines disposalGuidelines = optionalDisposalGuidelines.get();
-            disposalGuidelinesRepository.delete(disposalGuidelines);
+        disposalGuidelinesRepository.delete(disposalGuideline);
 
-            return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    private void saveDisposalGuideline(DisposalGuidelines newDisposalGuideline, DisposalGuidelines disposalGuidelines) {
+        disposalGuidelines.setDisposalGuideline(newDisposalGuideline.getDisposalGuideline());
+        disposalGuidelinesRepository.save(disposalGuidelines);
+    }
+
+    public DisposalGuidelines getDisposalGuideline(Long disposalGuidelineId) {
+        Optional<DisposalGuidelines> optionalDisposalGuideline = disposalGuidelinesRepository.findById(disposalGuidelineId);
+
+        if (optionalDisposalGuideline.isPresent()) {
+
+            return optionalDisposalGuideline.get();
+
         }
-
-        return ResponseEntity.notFound().build();
+        throw new DisposalGuidelineNotFoundException();
     }
 }

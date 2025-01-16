@@ -1,7 +1,10 @@
 package com.enviro.assessment.grad001.tebogomofokeng.service;
 
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryAlreadyExist;
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.WasteCategoryRepository;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,52 +35,55 @@ public class WasteCategoryService {
     }
 
     public ResponseEntity<WasteCategory> getWasteCategoryById (Long wasteCategoryId) {
-        Optional<WasteCategory> optionalWasteCategory = wasteCategoryRepository.findById(wasteCategoryId);
+        WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        if (optionalWasteCategory.isPresent()) {
-            WasteCategory wasteCategory = optionalWasteCategory.get();
-
-            return ResponseEntity.ok(wasteCategory);
-        }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(wasteCategory);
     }
 
     public ResponseEntity<Void> createWasteCategory (WasteCategory newWasteCategoryRequest) {
-        WasteCategory saveWasteCategory = new WasteCategory();
+        Boolean doesWasteCategoryExist = wasteCategoryRepository.existsByWasteCategory(newWasteCategoryRequest.getWasteCategory());
 
-        saveWasteCategory.setId(null);
-        saveWasteCategory.setWasteCategory(newWasteCategoryRequest.getWasteCategory());
+        if (doesWasteCategoryExist) {
+            throw new WasteCategoryAlreadyExist();
+        }
 
-        wasteCategoryRepository.save(saveWasteCategory);
+        WasteCategory wasteCategory = new WasteCategory();
+
+        saveWasteCategory(newWasteCategoryRequest, wasteCategory);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     public ResponseEntity<Void> updateWasteCategoryById (WasteCategory updatedWasteCategory,Long wasteCategoryId) {
-        Optional<WasteCategory> optionalWasteCategory = wasteCategoryRepository.findById(wasteCategoryId);
+        WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        if (optionalWasteCategory.isPresent()) {
-            WasteCategory wasteCategory = optionalWasteCategory.get();
-            wasteCategory.setWasteCategory(updatedWasteCategory.getWasteCategory());
-            wasteCategoryRepository.save(wasteCategory);
+        saveWasteCategory(updatedWasteCategory, wasteCategory);
 
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     public ResponseEntity<Void> deleteWasteCategoryById(Long wasteCategoryId) {
+        WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
+
+        wasteCategoryRepository.delete(wasteCategory);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    private void saveWasteCategory(WasteCategory newWasteCategory, WasteCategory wasteCategory) {
+        wasteCategory.setWasteCategory(newWasteCategory.getWasteCategory());
+
+        wasteCategoryRepository.save(wasteCategory);
+    }
+
+    public WasteCategory getWasteCategory(Long wasteCategoryId) {
         Optional<WasteCategory> optionalWasteCategory = wasteCategoryRepository.findById(wasteCategoryId);
 
         if (optionalWasteCategory.isPresent()) {
-            WasteCategory wasteCategory = optionalWasteCategory.get();
-            wasteCategoryRepository.delete(wasteCategory);
 
-            return ResponseEntity.noContent().build();
+            return optionalWasteCategory.get();
+
         }
-
-        return ResponseEntity.notFound().build();
+        throw new WasteCategoryNotFoundException();
     }
 }
