@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 @Entity
 public class DisposalGuidelines {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty(message = "disposal guidelines must NOT be empty")
     private String disposal_guidelines;

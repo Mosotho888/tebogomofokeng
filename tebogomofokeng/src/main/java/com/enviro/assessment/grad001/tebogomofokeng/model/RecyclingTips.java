@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 @Entity
 public class RecyclingTips {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty(message = "Recycling tips must NOT be empty")
     private String recyclingTips;

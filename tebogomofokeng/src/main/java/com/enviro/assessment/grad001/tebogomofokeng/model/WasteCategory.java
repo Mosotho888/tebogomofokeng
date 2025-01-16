@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 @Entity
 public class WasteCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty(message = "waste category must NOT be empty")
