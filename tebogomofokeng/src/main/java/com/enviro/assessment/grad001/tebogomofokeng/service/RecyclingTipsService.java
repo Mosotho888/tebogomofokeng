@@ -3,7 +3,9 @@ package com.enviro.assessment.grad001.tebogomofokeng.service;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipAlreadyExist;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipsNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.RecyclingTips;
+import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.RecyclingTipsRepository;
+import com.enviro.assessment.grad001.tebogomofokeng.repository.WasteCategoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,6 +69,15 @@ public class RecyclingTipsService {
 
         return ResponseEntity.noContent().build();
     }
+
+
+
+//    private void saveRecyclingTipToWasteCategory(RecyclingTips newRecyclingTip, RecyclingTips recyclingTip, WasteCategory wasteCategory) {
+//        recyclingTip.setRecyclingTip(newRecyclingTip.getRecyclingTip());
+//        recyclingTip.setWasteCategory(wasteCategory);
+//
+//        recyclingTipsRepository.save(recyclingTip);
+//    }
 
     private void saveRecyclingTip(RecyclingTips newRecyclingTip, RecyclingTips recyclingTip) {
         recyclingTip.setRecyclingTip(newRecyclingTip.getRecyclingTip());

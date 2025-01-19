@@ -1,11 +1,15 @@
 package com.enviro.assessment.grad001.tebogomofokeng.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
+
+@Setter
+@Getter
 @Entity
 public class WasteCategory {
     @Id
@@ -13,7 +17,16 @@ public class WasteCategory {
     private Long id;
 
     @NotEmpty(message = "waste category must NOT be empty")
+    @Column(nullable = false, unique = true)
     private String wasteCategory;
+
+    @OneToMany(mappedBy = "wasteCategory")
+    @JsonManagedReference
+    private List<DisposalGuidelines> disposalGuidelines;
+
+    @OneToMany(mappedBy = "wasteCategory")
+    @JsonManagedReference
+    private List<RecyclingTips> recyclingTips;
 
     public WasteCategory() {
     }
@@ -23,19 +36,4 @@ public class WasteCategory {
         this.wasteCategory = wasteCategory;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getWasteCategory() {
-        return wasteCategory;
-    }
-
-    public void setWasteCategory(String wasteCategory) {
-        this.wasteCategory = wasteCategory;
-    }
 }

@@ -1,9 +1,17 @@
 package com.enviro.assessment.grad001.tebogomofokeng.service;
 
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineAlreadyExists;
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipAlreadyExist;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryAlreadyExist;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryNotFoundException;
+import com.enviro.assessment.grad001.tebogomofokeng.model.DisposalGuidelines;
+import com.enviro.assessment.grad001.tebogomofokeng.model.RecyclingTips;
 import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
+import com.enviro.assessment.grad001.tebogomofokeng.repository.DisposalGuidelinesRepository;
+import com.enviro.assessment.grad001.tebogomofokeng.repository.RecyclingTipsRepository;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.WasteCategoryRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +24,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class WasteCategoryService {
     private final WasteCategoryRepository wasteCategoryRepository;
+    private final RecyclingTipsRepository recyclingTipsRepository;
+    private final DisposalGuidelinesRepository disposalGuidelinesRepository;
+    private final DisposalGuidelinesService disposalGuidelinesService;
+    private final RecyclingTipsService recyclingTipsService;
 
-    public WasteCategoryService(WasteCategoryRepository wasteCategoryRepository) {
+    @Autowired
+    public WasteCategoryService(WasteCategoryRepository wasteCategoryRepository, RecyclingTipsRepository recyclingTipsRepository, DisposalGuidelinesRepository disposalGuidelinesRepository, DisposalGuidelinesService disposalGuidelinesService, RecyclingTipsService recyclingTipsService) {
         this.wasteCategoryRepository = wasteCategoryRepository;
+        this.recyclingTipsRepository = recyclingTipsRepository;
+        this.disposalGuidelinesRepository = disposalGuidelinesRepository;
+        this.disposalGuidelinesService = disposalGuidelinesService;
+        this.recyclingTipsService = recyclingTipsService;
     }
 
     public ResponseEntity<List<WasteCategory>> getAllWasteCategories(Pageable pageable) {
@@ -47,7 +65,6 @@ public class WasteCategoryService {
         }
 
         WasteCategory wasteCategory = new WasteCategory();
-
         saveWasteCategory(newWasteCategoryRequest, wasteCategory);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -69,6 +86,61 @@ public class WasteCategoryService {
         return ResponseEntity.noContent().build();
     }
 
+    public ResponseEntity<Void> addRecyclingTipToWasteCategory(RecyclingTips recyclingTip, Long wasteCategoryId) {
+        Boolean doesRecyclingTipExist = recyclingTipsRepository.existsByRecyclingTip(recyclingTip.getRecyclingTip());
+
+        if (doesRecyclingTipExist) {
+            throw new RecyclingTipAlreadyExist();
+        }
+
+        WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
+
+        recyclingTip.setWasteCategory(wasteCategory);
+        recyclingTipsRepository.save(recyclingTip);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    public ResponseEntity<Void> addDisposalGuidelineToWasteCategory(DisposalGuidelines disposalGuidelines, Long wasteCategoryId) {
+        Boolean doesDisposalGuidelineExist = disposalGuidelinesRepository.existsByDisposalGuideline(disposalGuidelines.getDisposalGuideline());
+
+        if (doesDisposalGuidelineExist) {
+            throw new DisposalGuidelineAlreadyExists();
+        }
+
+        WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
+
+        disposalGuidelines.setWasteCategory(wasteCategory);
+        disposalGuidelinesRepository.save(disposalGuidelines);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    public ResponseEntity<Void> deleteRecyclingTipFromWasteCategory(Long wasteCategoryId, Long recyclingTipId) {
+        RecyclingTips recyclingTips = recyclingTipsService.getRecyclingTip(recyclingTipId);
+        WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
+
+        wasteCategory.getRecyclingTips().remove(recyclingTips);
+        recyclingTips.setWasteCategory(null);
+
+        wasteCategoryRepository.save(wasteCategory);
+
+
+        return ResponseEntity.noContent().build();
+    }
+
+    public ResponseEntity<Void> deleteDisposalGuidelineFromWasteCategory(Long wasteCategoryId, Long disposalGuidelineId) {
+        DisposalGuidelines disposalGuidelines = disposalGuidelinesService.getDisposalGuideline(disposalGuidelineId);
+        WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
+
+        wasteCategory.getDisposalGuidelines().remove(disposalGuidelines);
+        disposalGuidelines.setWasteCategory(null);
+
+        wasteCategoryRepository.save(wasteCategory);
+
+        return ResponseEntity.noContent().build();
+    }
+
     private void saveWasteCategory(WasteCategory newWasteCategory, WasteCategory wasteCategory) {
         wasteCategory.setWasteCategory(newWasteCategory.getWasteCategory());
 
@@ -79,10 +151,9 @@ public class WasteCategoryService {
         Optional<WasteCategory> optionalWasteCategory = wasteCategoryRepository.findById(wasteCategoryId);
 
         if (optionalWasteCategory.isPresent()) {
-
             return optionalWasteCategory.get();
-
         }
+
         throw new WasteCategoryNotFoundException();
     }
 }
