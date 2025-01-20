@@ -77,6 +77,11 @@ public class WasteCategoryService {
     public ResponseEntity<Void> deleteWasteCategoryById(Long wasteCategoryId) {
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
+        wasteCategory.getRecyclingTips().forEach(recyclingTips -> recyclingTips.getWasteCategories().remove(wasteCategory));
+        wasteCategory.getDisposalGuidelines().forEach(disposalGuidelines -> disposalGuidelines.getWasteCategories().remove(wasteCategory));
+
+        wasteCategoryRepository.save(wasteCategory);
+
         wasteCategoryRepository.delete(wasteCategory);
 
         return ResponseEntity.noContent().build();
