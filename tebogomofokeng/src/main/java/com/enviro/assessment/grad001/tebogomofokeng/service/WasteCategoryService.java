@@ -8,7 +8,6 @@ import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.DisposalGuidelinesRepository;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.RecyclingTipsRepository;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.WasteCategoryRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Slf4j
 public class WasteCategoryService {
     private final WasteCategoryRepository wasteCategoryRepository;
     private final RecyclingTipsRepository recyclingTipsRepository;
