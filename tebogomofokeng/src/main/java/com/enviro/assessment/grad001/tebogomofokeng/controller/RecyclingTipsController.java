@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/recycling-tips/")
+@RequestMapping("/api/recycling-tips")
 public class RecyclingTipsController {
     private final RecyclingTipsService recyclingTipsService;
 
@@ -24,26 +24,31 @@ public class RecyclingTipsController {
     public ResponseEntity<List<RecyclingTipResponseDTO>> getAllRecyclingTips(Pageable pageable) {
         return recyclingTipsService.getAllRecyclingTips(pageable);
     }
-    @GetMapping("{id}")
-    public ResponseEntity<RecyclingTipResponseDTO> getRecyclingTipById(@PathVariable Long id) {
-        return recyclingTipsService.getRecyclingTipById(id);
+    @GetMapping("/{recyclingTipId}")
+    public ResponseEntity<RecyclingTipResponseDTO> getRecyclingTipById(@PathVariable Long recyclingTipId) {
+        return recyclingTipsService.getRecyclingTipById(recyclingTipId);
     }
     @PostMapping
     public ResponseEntity<Void> createRecyclingTip(@Valid @RequestBody RecyclingTips newRecyclingTipRequest) {
         return recyclingTipsService.createRecyclingTip(newRecyclingTipRequest);
     }
-    @PutMapping("{id}")
-    public ResponseEntity<Void> updateRecyclingTip(@PathVariable Long id, @Valid @RequestBody RecyclingTips updatedRecyclingTip) {
-        return recyclingTipsService.updateRecyclingTips(id, updatedRecyclingTip);
+    @PutMapping("/{recyclingTipId}")
+    public ResponseEntity<Void> updateRecyclingTip(@PathVariable Long recyclingTipId, @Valid @RequestBody RecyclingTips updatedRecyclingTip) {
+        return recyclingTipsService.updateRecyclingTips(recyclingTipId, updatedRecyclingTip);
     }
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteRecyclingTipById (@PathVariable Long id) {
-        return recyclingTipsService.deleteRecyclingTipById(id);
+    @DeleteMapping("/{recyclingTipId}")
+    public ResponseEntity<Void> deleteRecyclingTipById (@PathVariable Long recyclingTipId) {
+        return recyclingTipsService.deleteRecyclingTipById(recyclingTipId);
     }
 
     @GetMapping("/{recyclingTipId}/waste-categories")
     public ResponseEntity<List<WasteCategoryResponseDTO>> getWasteCategoriesByRecyclingId(@PathVariable Long recyclingTipId) {
         return recyclingTipsService.getWasteCategoriesByRecyclingId(recyclingTipId);
+    }
+
+    @GetMapping("/{recyclingTipId}/waste-categories/{wasteCategoryId}")
+    public ResponseEntity<WasteCategoryResponseDTO> getWasteCategoryByRecyclingTipId(@PathVariable Long recyclingTipId, @PathVariable Long wasteCategoryId) {
+        return recyclingTipsService.getWasteCategoryByRecyclingId(recyclingTipId, wasteCategoryId);
     }
 
 

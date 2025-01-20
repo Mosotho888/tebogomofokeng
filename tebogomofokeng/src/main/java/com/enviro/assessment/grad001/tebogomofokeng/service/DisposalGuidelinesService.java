@@ -4,7 +4,9 @@ import com.enviro.assessment.grad001.tebogomofokeng.DTOs.DisposalGuidelineRespon
 import com.enviro.assessment.grad001.tebogomofokeng.DTOs.WasteCategoryResponseDTO;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineAlreadyExists;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineNotFoundException;
+import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.DisposalGuidelines;
+import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.DisposalGuidelinesRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -103,6 +105,26 @@ public class DisposalGuidelinesService {
         List<WasteCategoryResponseDTO> wasteCategoryResponse = mapToWasteCategoryResponseDTO(disposalGuideline);
 
         return ResponseEntity.ok(wasteCategoryResponse);
+    }
+
+    public ResponseEntity<WasteCategoryResponseDTO> getWasteCategoryByDisposalGuideline(Long disposalGuidelineId, Long wasteCategoryId) {
+        DisposalGuidelines disposalGuideline = getDisposalGuideline(disposalGuidelineId);
+
+        Optional<WasteCategory> optionalWasteCategory = disposalGuideline.getWasteCategories()
+                .stream()
+                .filter(wasteCategory1 -> wasteCategory1.getId().equals(wasteCategoryId)).findFirst();
+
+        if (optionalWasteCategory.isPresent()) {
+            WasteCategory wasteCategory = optionalWasteCategory.get();
+
+            WasteCategoryResponseDTO wasteCategoryResponseDTO = new WasteCategoryResponseDTO(
+                    wasteCategory.getId(),
+                    wasteCategory.getWasteCategory());
+
+            return ResponseEntity.ok(wasteCategoryResponseDTO);
+        }
+
+        throw new WasteCategoryNotFoundException();
     }
 
     private void saveDisposalGuideline(DisposalGuidelines newDisposalGuideline, DisposalGuidelines disposalGuidelines) {

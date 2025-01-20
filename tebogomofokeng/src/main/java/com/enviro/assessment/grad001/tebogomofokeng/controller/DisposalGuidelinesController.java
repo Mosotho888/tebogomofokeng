@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/disposal-guidelines/")
+@RequestMapping("/api/disposal-guidelines")
 public class DisposalGuidelinesController {
     private final DisposalGuidelinesService disposalGuidelinesService;
 
@@ -24,25 +24,30 @@ public class DisposalGuidelinesController {
     public ResponseEntity<List<DisposalGuidelineResponseDTO>> getAllDisposalGuidelines(Pageable pageable) {
         return disposalGuidelinesService.getAllDisposalGuidelines(pageable);
     }
-    @GetMapping("{id}")
-    public ResponseEntity<DisposalGuidelineResponseDTO> getDisposalGuidelineById(@PathVariable Long id) {
-        return disposalGuidelinesService.getDisposalGuidelinesById(id);
+    @GetMapping("/{disposalGuidelineId}")
+    public ResponseEntity<DisposalGuidelineResponseDTO> getDisposalGuidelineById(@PathVariable Long disposalGuidelineId) {
+        return disposalGuidelinesService.getDisposalGuidelinesById(disposalGuidelineId);
     }
     @PostMapping
     public ResponseEntity<Void> createDisposalGuideline(@Valid @RequestBody DisposalGuidelines newDisposalGuidelineRequest) {
         return disposalGuidelinesService.createDisposalGuideline(newDisposalGuidelineRequest);
     }
-    @PutMapping("{id}")
-    public ResponseEntity<Void> updateDisposalGuideline(@Valid @RequestBody DisposalGuidelines updatedDisposalGuideline, @PathVariable Long id) {
-        return disposalGuidelinesService.updateDisposalGuidelines(id, updatedDisposalGuideline);
+    @PutMapping("/{disposalGuidelineId}")
+    public ResponseEntity<Void> updateDisposalGuideline(@Valid @RequestBody DisposalGuidelines updatedDisposalGuideline, @PathVariable Long disposalGuidelineId) {
+        return disposalGuidelinesService.updateDisposalGuidelines(disposalGuidelineId, updatedDisposalGuideline);
     }
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteDisposalGuideline(@PathVariable Long id) {
-        return disposalGuidelinesService.deleteDisposalGuideline(id);
+    @DeleteMapping("/{disposalGuidelineId}")
+    public ResponseEntity<Void> deleteDisposalGuideline(@PathVariable Long disposalGuidelineId) {
+        return disposalGuidelinesService.deleteDisposalGuideline(disposalGuidelineId);
     }
 
     @GetMapping("/{disposalGuidelineId}/waste-categories")
     public ResponseEntity<List<WasteCategoryResponseDTO>> getWasteCategoriesByGuidelineId(@PathVariable Long disposalGuidelineId) {
         return disposalGuidelinesService.getWasteCategoriesByDisposalGuidelineId(disposalGuidelineId);
+    }
+
+    @GetMapping("/{disposalGuidelineId}/waste-categories/{wasteCategoryId}")
+    public ResponseEntity<WasteCategoryResponseDTO> getWasteCategoryByGuidelineId(@PathVariable Long disposalGuidelineId, @PathVariable Long wasteCategoryId) {
+        return disposalGuidelinesService.getWasteCategoryByDisposalGuideline(disposalGuidelineId, wasteCategoryId);
     }
 }
