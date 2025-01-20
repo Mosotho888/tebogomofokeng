@@ -113,14 +113,12 @@ public class WasteCategoryService {
     }
 
     public ResponseEntity<Void> deleteRecyclingTipFromWasteCategory(Long wasteCategoryId, Long recyclingTipId) {
-        RecyclingTips recyclingTips = recyclingTipsService.getRecyclingTip(recyclingTipId);
+        RecyclingTips recyclingTip = recyclingTipsService.getRecyclingTip(recyclingTipId);
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        wasteCategory.getRecyclingTips().remove(recyclingTips);
-        recyclingTips.setWasteCategories(null);
+        recyclingTip.getWasteCategories().remove(wasteCategory);
 
-        wasteCategoryRepository.save(wasteCategory);
-
+        recyclingTipsRepository.save(recyclingTip);
 
         return ResponseEntity.noContent().build();
     }
@@ -129,10 +127,9 @@ public class WasteCategoryService {
         DisposalGuidelines disposalGuidelines = disposalGuidelinesService.getDisposalGuideline(disposalGuidelineId);
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        wasteCategory.getDisposalGuidelines().remove(disposalGuidelines);
-        disposalGuidelines.setWasteCategories(null);
+        disposalGuidelines.getWasteCategories().remove(wasteCategory);
 
-        wasteCategoryRepository.save(wasteCategory);
+        disposalGuidelinesRepository.save(disposalGuidelines);
 
         return ResponseEntity.noContent().build();
     }
