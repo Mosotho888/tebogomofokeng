@@ -46,31 +46,37 @@ public class RecyclingTipsService {
                 pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))
         ));
 
-        List<RecyclingTipResponseDTO> recyclingTipResponse = allRecyclingTipsData.getContent().stream().map(
-                recyclingTipsResponse -> new RecyclingTipResponseDTO(
-                        recyclingTipsResponse.getId(),
-                        recyclingTipsResponse.getRecyclingTip(),
-                        recyclingTipsResponse.getWasteCategories()
-                                .stream()
-                                .map(wasteCategory -> new WasteCategoryResponseDTO(
-                                        wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList()))
-        ).toList();
+        List<RecyclingTipResponseDTO> recyclingTipResponse = mapToRecyclingTipResponseDTO(allRecyclingTipsData);
 
         return ResponseEntity.ok(recyclingTipResponse);
     }
 
-    public ResponseEntity<RecyclingTips> getRecyclingTipById(Long recyclingTipId) {
+    private static List<RecyclingTipResponseDTO> mapToRecyclingTipResponseDTO(Page<RecyclingTips> allRecyclingTipsData) {
+        return allRecyclingTipsData.getContent().stream().map(
+                recyclingTipsResponse -> new RecyclingTipResponseDTO(
+                        recyclingTipsResponse.getId(),
+                        recyclingTipsResponse.getRecyclingTip(),
+                        mapToWasteCategoryDTO(recyclingTipsResponse))
+        ).toList();
+    }
+
+    private static List<WasteCategoryResponseDTO> mapToWasteCategoryDTO(RecyclingTips recyclingTipsResponse) {
+        return recyclingTipsResponse.getWasteCategories()
+                .stream()
+                .map(wasteCategory -> new WasteCategoryResponseDTO(
+                        wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList());
+    }
+
+    public ResponseEntity<RecyclingTipResponseDTO> getRecyclingTipById(Long recyclingTipId) {
         RecyclingTips recyclingTip = getRecyclingTip(recyclingTipId);
 
         RecyclingTipResponseDTO recyclingTipResponse = new RecyclingTipResponseDTO(
                 recyclingTip.getId(),
                 recyclingTip.getRecyclingTip(),
-                recyclingTip.getWasteCategories()
-                        .stream().map(wasteCategory -> new WasteCategoryResponseDTO(
-                                wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList())
+                mapToWasteCategoryDTO(recyclingTip)
         );
 
-        return ResponseEntity.ok(recyclingTip);
+        return ResponseEntity.ok(recyclingTipResponse);
     }
 
     public ResponseEntity<Void> updateRecyclingTips(Long recyclingTipId, RecyclingTips updatedRecyclingTip) {
@@ -92,9 +98,7 @@ public class RecyclingTipsService {
     public ResponseEntity<List<WasteCategoryResponseDTO>> getWasteCategoriesByRecyclingId(Long recyclingTipId) {
         RecyclingTips recyclingTip = getRecyclingTip(recyclingTipId);
 
-        List<WasteCategoryResponseDTO> wasteCategoryResponse = recyclingTip.getWasteCategories()
-                .stream().map(wasteCategory -> new WasteCategoryResponseDTO(
-                        wasteCategory.getId(), wasteCategory.getWasteCategory())).toList();
+        List<WasteCategoryResponseDTO> wasteCategoryResponse = mapToWasteCategoryDTO(recyclingTip);
 
         return ResponseEntity.ok(wasteCategoryResponse);
     }

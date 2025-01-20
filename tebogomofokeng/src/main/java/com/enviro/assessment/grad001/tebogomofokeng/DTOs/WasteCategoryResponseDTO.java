@@ -1,10 +1,7 @@
 package com.enviro.assessment.grad001.tebogomofokeng.DTOs;
 
-import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import lombok.Data;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 public class WasteCategoryResponseDTO {

@@ -25,7 +25,7 @@ public class RecyclingTipsController {
         return recyclingTipsService.getAllRecyclingTips(pageable);
     }
     @GetMapping("{id}")
-    public ResponseEntity<RecyclingTips> getRecyclingTipById(@PathVariable Long id) {
+    public ResponseEntity<RecyclingTipResponseDTO> getRecyclingTipById(@PathVariable Long id) {
         return recyclingTipsService.getRecyclingTipById(id);
     }
     @PostMapping

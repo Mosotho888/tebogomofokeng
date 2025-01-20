@@ -1,12 +1,10 @@
 package com.enviro.assessment.grad001.tebogomofokeng.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
+@Data
 public class ErrorResponse {
     private LocalDateTime timestamp;
     private int status;

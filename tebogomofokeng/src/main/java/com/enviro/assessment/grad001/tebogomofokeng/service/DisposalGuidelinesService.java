@@ -1,12 +1,10 @@
 package com.enviro.assessment.grad001.tebogomofokeng.service;
 
 import com.enviro.assessment.grad001.tebogomofokeng.DTOs.DisposalGuidelineResponseDTO;
-import com.enviro.assessment.grad001.tebogomofokeng.DTOs.RecyclingTipResponseDTO;
 import com.enviro.assessment.grad001.tebogomofokeng.DTOs.WasteCategoryResponseDTO;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineAlreadyExists;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.DisposalGuidelines;
-import com.enviro.assessment.grad001.tebogomofokeng.model.RecyclingTips;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.DisposalGuidelinesRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,17 +48,25 @@ public class DisposalGuidelinesService {
                 pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))
         ));
 
-        List<DisposalGuidelineResponseDTO> disposalGuidelineResponse = allDisposalGuidelines.getContent().stream().map(
+        List<DisposalGuidelineResponseDTO> disposalGuidelineResponse = mapToDisposalGuidelineResponseDTO(allDisposalGuidelines);
+
+        return ResponseEntity.ok(disposalGuidelineResponse);
+    }
+
+    private static List<DisposalGuidelineResponseDTO> mapToDisposalGuidelineResponseDTO(Page<DisposalGuidelines> allDisposalGuidelines) {
+        return allDisposalGuidelines.getContent().stream().map(
                 disposalGuidelinesResponse -> new DisposalGuidelineResponseDTO(
                         disposalGuidelinesResponse.getId(),
                         disposalGuidelinesResponse.getDisposalGuideline(),
-                        disposalGuidelinesResponse.getWasteCategories()
-                                .stream()
-                                .map(wasteCategory -> new WasteCategoryResponseDTO(
-                                        wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList()))
+                        mapToWasteCategoryResponseDTO(disposalGuidelinesResponse))
         ).toList();
+    }
 
-        return ResponseEntity.ok(disposalGuidelineResponse);
+    private static List<WasteCategoryResponseDTO> mapToWasteCategoryResponseDTO(DisposalGuidelines disposalGuidelinesResponse) {
+        return disposalGuidelinesResponse.getWasteCategories()
+                .stream()
+                .map(wasteCategory -> new WasteCategoryResponseDTO(
+                        wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList());
     }
 
     public ResponseEntity<DisposalGuidelineResponseDTO> getDisposalGuidelinesById(Long disposalGuidelineId) {
@@ -69,9 +75,7 @@ public class DisposalGuidelinesService {
         DisposalGuidelineResponseDTO disposalGuidelineResponse = new DisposalGuidelineResponseDTO(
                 disposalGuideline.getId(),
                 disposalGuideline.getDisposalGuideline(),
-                disposalGuideline.getWasteCategories()
-                        .stream().map(wasteCategory -> new WasteCategoryResponseDTO(
-                                wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList())
+                mapToWasteCategoryResponseDTO(disposalGuideline)
         );
 
         return ResponseEntity.ok(disposalGuidelineResponse);
@@ -96,9 +100,7 @@ public class DisposalGuidelinesService {
     public ResponseEntity<List<WasteCategoryResponseDTO>> getWasteCategoriesByDisposalGuidelineId(Long disposalGuidelineId) {
         DisposalGuidelines disposalGuideline = getDisposalGuideline(disposalGuidelineId);
 
-        List<WasteCategoryResponseDTO> wasteCategoryResponse = disposalGuideline.getWasteCategories()
-                .stream().map(wasteCategory -> new WasteCategoryResponseDTO(
-                        wasteCategory.getId(), wasteCategory.getWasteCategory())).toList();
+        List<WasteCategoryResponseDTO> wasteCategoryResponse = mapToWasteCategoryResponseDTO(disposalGuideline);
 
         return ResponseEntity.ok(wasteCategoryResponse);
     }

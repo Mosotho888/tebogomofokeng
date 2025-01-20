@@ -1,12 +1,9 @@
 package com.enviro.assessment.grad001.tebogomofokeng.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -21,9 +18,6 @@ public class RecyclingTips {
     @Column(nullable = false, unique = true)
     private String recyclingTip;
 
-//    @ManyToOne
-//    @JoinColumn(name = "wasteCategoryId")
-//    @JsonBackReference
     @ManyToMany
     @JoinTable(
             name = "recyclingTip_wasteCategory",

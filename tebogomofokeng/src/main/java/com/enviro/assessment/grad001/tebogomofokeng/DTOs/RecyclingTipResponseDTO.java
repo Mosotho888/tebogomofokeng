@@ -1,6 +1,5 @@
 package com.enviro.assessment.grad001.tebogomofokeng.DTOs;
 
-import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import lombok.Data;
 
 import java.util.List;

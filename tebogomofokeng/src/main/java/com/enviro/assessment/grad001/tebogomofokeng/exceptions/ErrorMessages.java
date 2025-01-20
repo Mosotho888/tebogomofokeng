@@ -1,5 +1,8 @@
 package com.enviro.assessment.grad001.tebogomofokeng.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorMessages {
     DISPOSAL_GUIDELINE_NOT_FOUND("Disposal Guideline Not Found"),
     DISPOSAL_GUIDELINE_ALREADY_EXIST("Disposal Guideline Already Exist"),
@@ -14,7 +17,4 @@ public enum ErrorMessages {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

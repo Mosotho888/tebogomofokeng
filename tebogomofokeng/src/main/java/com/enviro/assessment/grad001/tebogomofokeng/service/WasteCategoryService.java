@@ -1,7 +1,5 @@
 package com.enviro.assessment.grad001.tebogomofokeng.service;
 
-import com.enviro.assessment.grad001.tebogomofokeng.exceptions.DisposalGuidelineAlreadyExists;
-import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipAlreadyExist;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryAlreadyExist;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.WasteCategoryNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.DisposalGuidelines;
@@ -90,26 +88,38 @@ public class WasteCategoryService {
         RecyclingTips recyclingTip = recyclingTipsService.getRecyclingTip(recyclingTipId);
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        recyclingTip.getWasteCategories().add(wasteCategory);
-        wasteCategory.getRecyclingTips().add(recyclingTip);
+        if (isWasteCategoryAssociatedWithRecyclingTip(recyclingTip, wasteCategory)) {
+            throw new WasteCategoryAlreadyExist();
+        }
 
-        wasteCategoryRepository.save(wasteCategory);
+        recyclingTip.getWasteCategories().add(wasteCategory);
+
         recyclingTipsRepository.save(recyclingTip);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    private static boolean isWasteCategoryAssociatedWithRecyclingTip(RecyclingTips recyclingTip, WasteCategory wasteCategory) {
+        return recyclingTip.getWasteCategories().contains(wasteCategory);
     }
 
     public ResponseEntity<Void> addDisposalGuidelineToWasteCategory(Long disposalGuidelineId, Long wasteCategoryId) {
         DisposalGuidelines disposalGuideline = disposalGuidelinesService.getDisposalGuideline(disposalGuidelineId);
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
+        if (isWasteCategoryAssociatedWithDisposalGuideline(disposalGuideline, wasteCategory)) {
+            throw new WasteCategoryAlreadyExist();
+        }
+
         disposalGuideline.getWasteCategories().add(wasteCategory);
-        wasteCategory.getDisposalGuidelines().add(disposalGuideline);
 
         wasteCategoryRepository.save(wasteCategory);
-        disposalGuidelinesRepository.save(disposalGuideline);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    private static boolean isWasteCategoryAssociatedWithDisposalGuideline(DisposalGuidelines disposalGuideline, WasteCategory wasteCategory) {
+        return disposalGuideline.getWasteCategories().contains(wasteCategory);
     }
 
     public ResponseEntity<Void> deleteRecyclingTipFromWasteCategory(Long wasteCategoryId, Long recyclingTipId) {
