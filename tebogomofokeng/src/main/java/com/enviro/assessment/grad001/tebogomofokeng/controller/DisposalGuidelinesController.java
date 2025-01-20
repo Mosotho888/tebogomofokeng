@@ -1,5 +1,7 @@
 package com.enviro.assessment.grad001.tebogomofokeng.controller;
 
+import com.enviro.assessment.grad001.tebogomofokeng.DTOs.DisposalGuidelineResponseDTO;
+import com.enviro.assessment.grad001.tebogomofokeng.DTOs.WasteCategoryResponseDTO;
 import com.enviro.assessment.grad001.tebogomofokeng.model.DisposalGuidelines;
 import com.enviro.assessment.grad001.tebogomofokeng.service.DisposalGuidelinesService;
 import jakarta.validation.Valid;
@@ -19,11 +21,11 @@ public class DisposalGuidelinesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DisposalGuidelines>> getAllDisposalGuidelines(Pageable pageable) {
+    public ResponseEntity<List<DisposalGuidelineResponseDTO>> getAllDisposalGuidelines(Pageable pageable) {
         return disposalGuidelinesService.getAllDisposalGuidelines(pageable);
     }
     @GetMapping("{id}")
-    public ResponseEntity<DisposalGuidelines> getDisposalGuidelineById(@PathVariable Long id) {
+    public ResponseEntity<DisposalGuidelineResponseDTO> getDisposalGuidelineById(@PathVariable Long id) {
         return disposalGuidelinesService.getDisposalGuidelinesById(id);
     }
     @PostMapping
@@ -37,5 +39,10 @@ public class DisposalGuidelinesController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteDisposalGuideline(@PathVariable Long id) {
         return disposalGuidelinesService.deleteDisposalGuideline(id);
+    }
+
+    @GetMapping("/{disposalGuidelineId}/waste-categories")
+    public ResponseEntity<List<WasteCategoryResponseDTO>> getWasteCategoriesByGuidelineId(@PathVariable Long disposalGuidelineId) {
+        return disposalGuidelinesService.getWasteCategoriesByDisposalGuidelineId(disposalGuidelineId);
     }
 }
