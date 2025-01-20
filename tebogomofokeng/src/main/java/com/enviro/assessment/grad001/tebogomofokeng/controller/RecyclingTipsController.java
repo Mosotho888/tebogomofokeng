@@ -1,5 +1,7 @@
 package com.enviro.assessment.grad001.tebogomofokeng.controller;
 
+import com.enviro.assessment.grad001.tebogomofokeng.DTOs.RecyclingTipResponseDTO;
+import com.enviro.assessment.grad001.tebogomofokeng.DTOs.WasteCategoryResponseDTO;
 import com.enviro.assessment.grad001.tebogomofokeng.model.RecyclingTips;
 import com.enviro.assessment.grad001.tebogomofokeng.service.RecyclingTipsService;
 import jakarta.validation.Valid;
@@ -19,7 +21,7 @@ public class RecyclingTipsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RecyclingTips>> getAllRecyclingTips(Pageable pageable) {
+    public ResponseEntity<List<RecyclingTipResponseDTO>> getAllRecyclingTips(Pageable pageable) {
         return recyclingTipsService.getAllRecyclingTips(pageable);
     }
     @GetMapping("{id}")
@@ -39,9 +41,9 @@ public class RecyclingTipsController {
         return recyclingTipsService.deleteRecyclingTipById(id);
     }
 
-    @GetMapping("/categories/{categoryId}/tips")
-    public ResponseEntity<RecyclingTips> getRecyclingTipsByCategoryId(@PathVariable Long categoryId) {
-        return null;
+    @GetMapping("/{recyclingTipId}/waste-categories")
+    public ResponseEntity<List<WasteCategoryResponseDTO>> getWasteCategoriesByRecyclingId(@PathVariable Long recyclingTipId) {
+        return recyclingTipsService.getWasteCategoriesByRecyclingId(recyclingTipId);
     }
 
 

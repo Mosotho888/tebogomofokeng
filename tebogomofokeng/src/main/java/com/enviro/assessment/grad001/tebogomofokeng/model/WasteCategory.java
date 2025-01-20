@@ -3,13 +3,13 @@ package com.enviro.assessment.grad001.tebogomofokeng.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 @Entity
 public class WasteCategory {
     @Id
@@ -20,12 +20,10 @@ public class WasteCategory {
     @Column(nullable = false, unique = true)
     private String wasteCategory;
 
-    @OneToMany(mappedBy = "wasteCategory")
-    @JsonManagedReference
+    @ManyToMany(mappedBy = "wasteCategories")
     private List<DisposalGuidelines> disposalGuidelines;
 
-    @OneToMany(mappedBy = "wasteCategory")
-    @JsonManagedReference
+    @ManyToMany(mappedBy = "wasteCategories")
     private List<RecyclingTips> recyclingTips;
 
     public WasteCategory() {

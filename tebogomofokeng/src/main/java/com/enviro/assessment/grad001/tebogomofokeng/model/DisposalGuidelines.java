@@ -1,16 +1,18 @@
 package com.enviro.assessment.grad001.tebogomofokeng.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 @Entity
-@Validated
-@Setter
-@Getter
+@Data
 public class DisposalGuidelines {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +21,15 @@ public class DisposalGuidelines {
     @NotEmpty(message = "disposal guidelines must NOT be empty")
     @Column(nullable = false, unique = true)
     private String disposalGuideline;
-    @ManyToOne
-    @JoinColumn(name = "wasteCategoryId")
-    @JsonBackReference
-    private WasteCategory wasteCategory;
+
+    @ManyToMany
+    @JoinTable(
+            name = "disposalGuideline_wasteCategory",
+            joinColumns = @JoinColumn(name = "disposalGuidelineId"),
+            inverseJoinColumns = @JoinColumn(name = "wasteCategoryId")
+    )
+    @JsonIgnore
+    private List<WasteCategory> wasteCategories;
 
     public DisposalGuidelines() {
     }

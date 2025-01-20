@@ -50,7 +50,7 @@ public class WasteCategoryController {
 
     @PostMapping("{id}/recycling-tip")
     public ResponseEntity<Void> addRecyclingTipToWasteCategory(@RequestBody RecyclingTips newRecyclingTipRequest, @PathVariable Long id) {
-        return wasteCategoryService.addRecyclingTipToWasteCategory(newRecyclingTipRequest, id);
+        return wasteCategoryService.addRecyclingTipToWasteCategory(newRecyclingTipRequest.getId(), id);
     }
 
     @DeleteMapping("{wasteCategoryId}/recycling-tip/{recyclingTipId}")
@@ -60,7 +60,7 @@ public class WasteCategoryController {
 
     @PostMapping("{id}/disposal-guideline")
     public ResponseEntity<Void> addDisposalGuidelineToWasteCategory(@RequestBody DisposalGuidelines newDisposalGuidelineRequest, @PathVariable Long id) {
-        return wasteCategoryService.addDisposalGuidelineToWasteCategory(newDisposalGuidelineRequest, id);
+        return wasteCategoryService.addDisposalGuidelineToWasteCategory(newDisposalGuidelineRequest.getId(), id);
     }
 
     @DeleteMapping("{wasteCategoryId}/disposal-guideline/{disposalGuidelineId}")

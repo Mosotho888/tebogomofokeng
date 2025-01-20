@@ -1,11 +1,12 @@
 package com.enviro.assessment.grad001.tebogomofokeng.service;
 
+import com.enviro.assessment.grad001.tebogomofokeng.DTOs.RecyclingTipResponseDTO;
+import com.enviro.assessment.grad001.tebogomofokeng.DTOs.WasteCategoryResponseDTO;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipAlreadyExist;
 import com.enviro.assessment.grad001.tebogomofokeng.exceptions.RecyclingTipsNotFoundException;
 import com.enviro.assessment.grad001.tebogomofokeng.model.RecyclingTips;
 import com.enviro.assessment.grad001.tebogomofokeng.model.WasteCategory;
 import com.enviro.assessment.grad001.tebogomofokeng.repository.RecyclingTipsRepository;
-import com.enviro.assessment.grad001.tebogomofokeng.repository.WasteCategoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RecyclingTipsService {
@@ -38,18 +40,36 @@ public class RecyclingTipsService {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    public ResponseEntity<List<RecyclingTips>> getAllRecyclingTips(Pageable pageable) {
+    public ResponseEntity<List<RecyclingTipResponseDTO>> getAllRecyclingTips(Pageable pageable) {
         Page<RecyclingTips> allRecyclingTipsData = recyclingTipsRepository.findAll(PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))
         ));
 
-        return ResponseEntity.ok(allRecyclingTipsData.getContent());
+        List<RecyclingTipResponseDTO> recyclingTipResponse = allRecyclingTipsData.getContent().stream().map(
+                recyclingTipsResponse -> new RecyclingTipResponseDTO(
+                        recyclingTipsResponse.getId(),
+                        recyclingTipsResponse.getRecyclingTip(),
+                        recyclingTipsResponse.getWasteCategories()
+                                .stream()
+                                .map(wasteCategory -> new WasteCategoryResponseDTO(
+                                        wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList()))
+        ).toList();
+
+        return ResponseEntity.ok(recyclingTipResponse);
     }
 
     public ResponseEntity<RecyclingTips> getRecyclingTipById(Long recyclingTipId) {
         RecyclingTips recyclingTip = getRecyclingTip(recyclingTipId);
+
+        RecyclingTipResponseDTO recyclingTipResponse = new RecyclingTipResponseDTO(
+                recyclingTip.getId(),
+                recyclingTip.getRecyclingTip(),
+                recyclingTip.getWasteCategories()
+                        .stream().map(wasteCategory -> new WasteCategoryResponseDTO(
+                                wasteCategory.getId(), wasteCategory.getWasteCategory())).collect(Collectors.toList())
+        );
 
         return ResponseEntity.ok(recyclingTip);
     }
@@ -70,14 +90,15 @@ public class RecyclingTipsService {
         return ResponseEntity.noContent().build();
     }
 
+    public ResponseEntity<List<WasteCategoryResponseDTO>> getWasteCategoriesByRecyclingId(Long recyclingTipId) {
+        RecyclingTips recyclingTip = getRecyclingTip(recyclingTipId);
 
+        List<WasteCategoryResponseDTO> wasteCategoryResponse = recyclingTip.getWasteCategories()
+                .stream().map(wasteCategory -> new WasteCategoryResponseDTO(
+                        wasteCategory.getId(), wasteCategory.getWasteCategory())).toList();
 
-//    private void saveRecyclingTipToWasteCategory(RecyclingTips newRecyclingTip, RecyclingTips recyclingTip, WasteCategory wasteCategory) {
-//        recyclingTip.setRecyclingTip(newRecyclingTip.getRecyclingTip());
-//        recyclingTip.setWasteCategory(wasteCategory);
-//
-//        recyclingTipsRepository.save(recyclingTip);
-//    }
+        return ResponseEntity.ok(wasteCategoryResponse);
+    }
 
     private void saveRecyclingTip(RecyclingTips newRecyclingTip, RecyclingTips recyclingTip) {
         recyclingTip.setRecyclingTip(newRecyclingTip.getRecyclingTip());
