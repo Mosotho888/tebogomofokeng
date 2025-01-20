@@ -77,14 +77,22 @@ public class WasteCategoryService {
     public ResponseEntity<Void> deleteWasteCategoryById(Long wasteCategoryId) {
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        wasteCategory.getRecyclingTips().forEach(recyclingTips -> recyclingTips.getWasteCategories().remove(wasteCategory));
-        wasteCategory.getDisposalGuidelines().forEach(disposalGuidelines -> disposalGuidelines.getWasteCategories().remove(wasteCategory));
+        wasteCategory.getRecyclingTips().forEach(recyclingTips -> removeWasteCategoryFromRecyclingTip(recyclingTips, wasteCategory));
+        wasteCategory.getDisposalGuidelines().forEach(disposalGuidelines -> removeDisposalCategoryFromDisposalGuideline(disposalGuidelines, wasteCategory));
 
         wasteCategoryRepository.save(wasteCategory);
 
         wasteCategoryRepository.delete(wasteCategory);
 
         return ResponseEntity.noContent().build();
+    }
+
+    private static void removeDisposalCategoryFromDisposalGuideline(DisposalGuidelines disposalGuidelines, WasteCategory wasteCategory) {
+        disposalGuidelines.getWasteCategories().remove(wasteCategory);
+    }
+
+    private static void removeWasteCategoryFromRecyclingTip(RecyclingTips recyclingTips, WasteCategory wasteCategory) {
+        recyclingTips.getWasteCategories().remove(wasteCategory);
     }
 
     public ResponseEntity<Void> addRecyclingTipToWasteCategory(Long recyclingTipId, Long wasteCategoryId) {
@@ -129,7 +137,7 @@ public class WasteCategoryService {
         RecyclingTips recyclingTip = recyclingTipsService.getRecyclingTip(recyclingTipId);
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        recyclingTip.getWasteCategories().remove(wasteCategory);
+        removeWasteCategoryFromRecyclingTip(recyclingTip, wasteCategory);
 
         recyclingTipsRepository.save(recyclingTip);
 
@@ -140,7 +148,7 @@ public class WasteCategoryService {
         DisposalGuidelines disposalGuidelines = disposalGuidelinesService.getDisposalGuideline(disposalGuidelineId);
         WasteCategory wasteCategory = getWasteCategory(wasteCategoryId);
 
-        disposalGuidelines.getWasteCategories().remove(wasteCategory);
+        removeDisposalCategoryFromDisposalGuideline(disposalGuidelines, wasteCategory);
 
         disposalGuidelinesRepository.save(disposalGuidelines);
 
